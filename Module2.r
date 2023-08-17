@@ -84,15 +84,33 @@ lines(sort(data$Exposure_quant), fitted_simple_model[order(data$Exposure_quant)]
       col = "#7272ff", lwd = 2)
 
 
-age <- 40
+ages_to_predict <- c(40, 50, 60, 70, 80, 90)
+age = 40
 PEL <- 0.1
 test_gender <- 2
-
+str(data$Gender)
 #Using coefficients from the multiple_reg_model
-log_odds <- (-0.398565) + (0.558996 * PEL) + (0.001678 * age) + (0.141479 * test_gender)
+log_odds <- (-7.47875) + (4.29844 * PEL) + (0.01692 * age) + (1.44461 * test_gender)
 
 odds_ratio <- exp(log_odds)
 
 probability <- odds_ratio / (1 + odds_ratio)
 
 cat("Prediction for 40 year old: ", probability) #0.5018531
+
+multiple_new_model <- glm(data$Disease ~ data$Exposure_quant + data$Gender + data$Age, data = data, family = binomial(logit))
+
+summary(multiple_new_model)
+
+newdata <- data.frame(Exposure_quant = rep(PEL, length(ages_to_predict)),
+                      Gender = rep(test_gender, length(ages_to_predict)),
+                      Socioeconomic_status="Middle",
+                      Age = ages_to_predict)
+
+newdata
+
+# cat(predict(multiple_reg_model_bin, data.frame(Exposure_quant=0.1, Gender=2, Age=40), type = "response"))
+
+# newdata$Prob <- predict(multiple_reg_model_bin, newdata, type = "response")
+
+#newdata
